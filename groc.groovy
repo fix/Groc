@@ -89,6 +89,11 @@ def createGroc(File source, File output){
 
   FileWriter fw=new FileWriter(output)
 /**
+ * 
+ *## The HTML template, thanks to MarkupBuilder
+ * 
+ */
+/**
 * Inlining all the javascript and css
 */
   def tl=new MarkupBuilder(fw).html{
