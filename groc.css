@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #jump_to, #jump_page {
   background: white;
-  box-shadow: 0 0 25px #777;
+  border: solid 1px #aaa;
   font: 10px Arial;
   cursor: pointer;
   text-align: left;
