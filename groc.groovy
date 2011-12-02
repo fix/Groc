@@ -88,9 +88,9 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-  /**
-   * Inlining all the javascript and css
-   */
+/**
+* Inlining all the javascript and css
+*/
   def tl=new MarkupBuilder(fw).html{
     head{
       title("Grocs "+source.name)

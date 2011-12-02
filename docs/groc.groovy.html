@@ -514,20 +514,13 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             <td class='docs main' colspan='2'>
               <div class='pilwrap'>
                 <a class='pilcrow' href='#section-0'>#</a>
-              </div><h2>Introduction</h2><p>Inspired by <a href="http://jashkenas.github.com/docco/">Docco</a>, Groc is a <em>document generator</em> based on your comments in the source code. You can optionally use the <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> to enhance the formatting</p><h2>Installation</h2><p>You need to have Groovy installed on your machine.</p><h2>Use</h2><p>You can launch it inside a directory containing your groovy files using <code>groovy groc.groovy</code>. It will create a folder called <code>docs</code> with all your html files</p>
+              </div><h2>Introduction</h2><p>Inspired by <a href="http://jashkenas.github.com/docco/">Docco</a>, Groc is a <em>document generator</em> based on your comments in the source code. You can optionally use the <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> to enhance the formatting</p><h2>Installation</h2><p>You need to have Groovy installed on your machine.</p><h2>Use</h2><p>You can launch it inside a directory containing your groovy files using <code>groovy https://raw.github.com/fix/Groc/master/groc.groovy</code>. It will create a folder called <code>docs</code> with all your html files</p><p>Only comments starting with <code>/**</code> are parsed whereas <code>//</code> or <code>/*</code> comments are left in the code.</p>
             </td>
           </tr>
           <tr id='section-1'>
-            <td class='docs main' colspan='2'>
-              <div class='pilwrap'>
-                <a class='pilcrow' href='#section-1'>#</a>
-              </div><p>Only comments starting with `<code>are parsed whereas</code>//<code>or</code>/*` comments are left in the code.</p>
-            </td>
-          </tr>
-          <tr id='section-2'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-2'>#</a>
+                <a class='pilcrow' href='#section-1'>#</a>
               </div><p>Grab the MarkDown processor. All capabilities with extensions can be used. See <a href="https://github.com/sirthias/pegdown">PegDown</a> for more information.</p>
             </td>
             <td class='codes'>
@@ -536,10 +529,10 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 </pre>
             </td>
           </tr>
-          <tr id='section-3'>
+          <tr id='section-2'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-3'>#</a>
+                <a class='pilcrow' href='#section-2'>#</a>
               </div><p>Import Template Engine, MarkupBuilder and PegDown processor</p>
             </td>
             <td class='codes'>
@@ -552,10 +545,10 @@ import org.pegdown.PegDownProcessor
 </pre>
             </td>
           </tr>
-          <tr id='section-4'>
+          <tr id='section-3'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-4'>#</a>
+                <a class='pilcrow' href='#section-3'>#</a>
               </div><p>Set Initial parameters such as current folder to process your <code>.groovy</code> files</p>
             </td>
             <td class='codes'>
@@ -566,10 +559,10 @@ docs.mkdir()
 </pre>
             </td>
           </tr>
-          <tr id='section-5'>
+          <tr id='section-4'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-5'>#</a>
+                <a class='pilcrow' href='#section-4'>#</a>
               </div><p>Executing for all <code>.groovy</code> files in the folder</p>
             </td>
             <td class='codes'>
@@ -583,28 +576,25 @@ docs.mkdir()
 </pre>
             </td>
           </tr>
-          <tr id='section-6'>
+          <tr id='section-5'>
             <td class='docs main' colspan='2'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-6'>#</a>
+                <a class='pilcrow' href='#section-5'>#</a>
               </div><h2>The main method</h2><p>You can create this kind of text spanning all the page commenting "empty" code</p>
             </td>
           </tr>
-          <tr id='section-7'>
-            <td class='docs main' colspan='2'>
-              <div class='pilwrap'>
-                <a class='pilcrow' href='#section-7'>#</a>
-              </div><p>take input file and output file. Erase output if existing</p>
-            </td>
-          </tr>
-          <tr id='section-8'>
+          <tr id='section-6'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-8'>#</a>
-              </div><p>Comment not parsed</p>
+                <a class='pilcrow' href='#section-6'>#</a>
+              </div><p>take input file and output file. Erase output if existing</p>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>def createGroc(File source, File output){
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>/*
+ * Comment not parsed
+ * 
+ */
+def createGroc(File source, File output){
   def parsedCode=[]
   boolean commentOn=false
   def currentCode // comment,code
@@ -643,10 +633,10 @@ docs.mkdir()
 </pre>
             </td>
           </tr>
-          <tr id='section-9'>
+          <tr id='section-7'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-9'>#</a>
+                <a class='pilcrow' href='#section-7'>#</a>
               </div><p>Inlining all the javascript and css</p>
             </td>
             <td class='codes'>
@@ -655,7 +645,7 @@ docs.mkdir()
       title("Grocs "+source.name)
       meta("http-equiv":"content-type", content:"text/html; charset=UTF8")
       style(media:"all"){
-        mkp.yieldUnescaped(new File("groc.css").text)
+        mkp.yieldUnescaped("https://raw.github.com/fix/Groc/master/groc.css".toURL().text)
       }
       style(media:"all"){
         mkp.yieldUnescaped("http://alexgorbatchev.com/pub/sh/current/styles/shCore.css".toURL().text)
