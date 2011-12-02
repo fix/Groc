@@ -44,22 +44,25 @@ extension = args.length==1?args[0]:"groovy"
  * Set Initial parameters such as current folder to process your `.groovy` files
  */
 root=new File(".")
-docs=new File(root, "docs")
+docs=new File("docs")
 docs.mkdir()
+toc=[:]
 
 /**
  *Executing for all `.groovy` files in the folder
  */
 def parseFiles(File folder,String relativePath=""){
-  folder.listFiles().each{
-    if(it.isDirectory()&&it.name!="docs"&&!it.name.startsWith(".")){
-      parseFiles(it,relativePath+"/"+it.name)
-    }
-    if(it.name =~ ".*\\.${extension}"){
-      File docFolder=new File(docs,relativePath)
+  folder.listFiles().sort{it.isDirectory()?1:-1}.each{
+    if(it.name =~ ".*\\.${extension}\$"){
+      File docFolder=new File(docs.path+"/"+relativePath)
       docFolder.mkdirs()
-      createGroc(it,new File(docFolder,it.name+".html"))
+      File docSource=new File(docFolder.path+"/"+it.name+".html")
+      toc[it]=[docSource,relativePath+it.name+".html"]
     }
+    else if(it.isDirectory()&&it.name!="docs"&&!it.name.startsWith(".")){
+      parseFiles(it,relativePath+it.name+"/")
+    }
+    
   }
 }
 
@@ -73,25 +76,29 @@ parseFiles(root)
  */
 /*
  * Comment not parsed
- * 
  */
 def createGroc(File source, File output){
+/**
+ *## The Parser
+ */
   def parsedCode=[]
   boolean commentOn=false
   def currentCode // comment,code
   source.eachLine{
     def line=it
     if(it =~ /^\/\*\*.*/){
-      if(currentCode)parsedCode<<currentCode
-      currentCode=["", ""]
-      commentOn=true
-      line=it.replaceFirst("/\\**","")
+      if(!commentOn){
+        if(currentCode)parsedCode<<currentCode
+        currentCode=["", ""]
+        line=it.replaceFirst("/\\**","")
+        commentOn=true
+      }
     }
 
     if(commentOn){
       currentCode[0]+=((line =~ ".?\\*\\**/")
-          .replaceFirst("") =~ ".?\\*")
-          .replaceFirst("")+"\n"
+      .replaceFirst("") =~ ".?\\*")
+      .replaceFirst("")+"\n"
     }
     else{
       currentCode[1]+=line+"\n"
@@ -111,14 +118,14 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-  /**
-   * 
-   *## The HTML template, thanks to MarkupBuilder
-   * 
-   */
-  /**
-   * Inlining all the javascript and css
-   */
+/**
+* 
+*## The HTML template, thanks to MarkupBuilder
+* 
+*/
+/**
+* Inlining all the javascript and css
+*/
   def tl=new MarkupBuilder(fw).html{
     head{
       title("Grocs "+source.name)
@@ -138,6 +145,22 @@ def createGroc(File source, File output){
     }
     body{
       div(id:"content"){
+        if(toc.size()>1){
+          div(id:"jump_to"){
+            mkp.yieldUnescaped("Jump To &hellip;")
+            div(id:"jump_wrapper"){
+              div(id:"jump_page"){
+                toc.entrySet().each{
+                  a("class":"source",
+                    href:docs.absolutePath+"/${it.value[1]}",
+                    style:(it.key==source?"background-color:#aaffaa;":""),
+                    it.key.path.replaceFirst("./","")
+                    )
+                }
+              }
+            }
+          }
+        }
         table(cellpadding:"0", cellspacing:"0"){
           thead{
             th("class":"docs"){ h1(source.name) }
@@ -168,4 +191,12 @@ def createGroc(File source, File output){
       script(type:"text/javascript"){ mkp.yield("SyntaxHighlighter.all()") }
     }
   }
+}
+
+/**
+ *## Do It!
+ */
+/** */
+toc.entrySet().each{
+  createGroc(it.key,it.value[0])
 }
