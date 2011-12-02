@@ -38,25 +38,32 @@ import org.pegdown.PegDownProcessor
  * 
  * Default is "groovy"
  */
-def extension = args.length==1?args[0]:"groovy"
+extension = args.length==1?args[0]:"groovy"
 
 /**
  * Set Initial parameters such as current folder to process your `.groovy` files
  */
-File root=new File(".")
-File docs=new File(root, "docs")
+root=new File(".")
+docs=new File(root, "docs")
 docs.mkdir()
 
 /**
  *Executing for all `.groovy` files in the folder
  */
-root.listFiles().each{
-  if(it.name =~ ".*\\.${extension}"){
-    File output=new File(docs,it.name+".html")
-    createGroc(it,output)
+def parseFiles(File folder,String relativePath=""){
+  folder.listFiles().each{
+    if(it.isDirectory()&&it.name!="docs"&&!it.name.startsWith(".")){
+      parseFiles(it,relativePath+"/"+it.name)
+    }
+    if(it.name =~ ".*\\.${extension}"){
+      File docFolder=new File(docs,relativePath)
+      docFolder.mkdirs()
+      createGroc(it,new File(docFolder,it.name+".html"))
+    }
   }
 }
 
+parseFiles(root)
 /*********************
  *## The main method
  *You can create this kind of text spanning all the page commenting "empty" code
@@ -83,8 +90,8 @@ def createGroc(File source, File output){
 
     if(commentOn){
       currentCode[0]+=((line =~ ".?\\*\\**/")
-        .replaceFirst("") =~ ".?\\*")
-        .replaceFirst("")+"\n"
+          .replaceFirst("") =~ ".?\\*")
+          .replaceFirst("")+"\n"
     }
     else{
       currentCode[1]+=line+"\n"
@@ -104,14 +111,14 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-/**
- * 
- *## The HTML template, thanks to MarkupBuilder
- * 
- */
-/**
-* Inlining all the javascript and css
-*/
+  /**
+   * 
+   *## The HTML template, thanks to MarkupBuilder
+   * 
+   */
+  /**
+   * Inlining all the javascript and css
+   */
   def tl=new MarkupBuilder(fw).html{
     head{
       title("Grocs "+source.name)
@@ -133,9 +140,7 @@ def createGroc(File source, File output){
       div(id:"content"){
         table(cellpadding:"0", cellspacing:"0"){
           thead{
-            th("class":"docs"){
-              h1(source.name)
-            }
+            th("class":"docs"){ h1(source.name) }
             th()
           }
           tbody{
@@ -145,11 +150,11 @@ def createGroc(File source, File output){
                   div("class":"pilwrap"){
                     a("class":"pilcrow", href:"#section-"+i, "#")
                   }
-                  
+
                   mkp.yieldUnescaped(code[0])
                 }
                 if(code[1].size()>0){
-                td("class":"codes"){
+                  td("class":"codes"){
                     pre("class":"brush: groovy; gutter: false; toolbar: false;"){
                       mkp.yield(code[1])
                     }

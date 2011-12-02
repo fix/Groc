@@ -558,7 +558,7 @@ import org.pegdown.PegDownProcessor
 </ul><p>Default is "groovy"</p>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>def extension = args.length==1?args[0]:"groovy"
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>extension = args.length==1?args[0]:"groovy"
 
 </pre>
             </td>
@@ -570,8 +570,8 @@ import org.pegdown.PegDownProcessor
               </div><p>Set Initial parameters such as current folder to process your <code>.groovy</code> files</p>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>File root=new File(".")
-File docs=new File(root, "docs")
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>root=new File(".")
+docs=new File(root, "docs")
 docs.mkdir()
 
 </pre>
@@ -584,13 +584,20 @@ docs.mkdir()
               </div><p>Executing for all <code>.groovy</code> files in the folder</p>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>root.listFiles().each{
-  if(it.name =~ ".*\\.${extension}"){
-    File output=new File(docs,it.name+".html")
-    createGroc(it,output)
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def parseFiles(File folder,String relativePath=""){
+  folder.listFiles().each{
+    if(it.isDirectory()&amp;&amp;it.name!="docs"&amp;&amp;!it.name.startsWith(".")){
+      parseFiles(it,relativePath+"/"+it.name)
+    }
+    if(it.name =~ ".*\\.${extension}"){
+      File docFolder=new File(docs,relativePath)
+      docFolder.mkdirs()
+      createGroc(it,new File(docFolder,it.name+".html"))
+    }
   }
 }
 
+parseFiles(root)
 </pre>
             </td>
           </tr>
@@ -627,8 +634,8 @@ def createGroc(File source, File output){
 
     if(commentOn){
       currentCode[0]+=((line =~ ".?\\*\\**/")
-        .replaceFirst("") =~ ".?\\*")
-        .replaceFirst("")+"\n"
+          .replaceFirst("") =~ ".?\\*")
+          .replaceFirst("")+"\n"
     }
     else{
       currentCode[1]+=line+"\n"
@@ -648,24 +655,15 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-</pre>
-            </td>
-          </tr>
-          <tr id='section-8'>
-            <td class='docs main' colspan='2'>
-              <div class='pilwrap'>
-                <a class='pilcrow' href='#section-8'>#</a>
-              </div><h2>The HTML template, thanks to MarkupBuilder</h2>
-            </td>
-          </tr>
-          <tr id='section-9'>
-            <td class='docs' colspan='1'>
-              <div class='pilwrap'>
-                <a class='pilcrow' href='#section-9'>#</a>
-              </div><p>Inlining all the javascript and css</p>
-            </td>
-            <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>  def tl=new MarkupBuilder(fw).html{
+  /**
+   * 
+   *## The HTML template, thanks to MarkupBuilder
+   * 
+   */
+  /**
+   * Inlining all the javascript and css
+   */
+  def tl=new MarkupBuilder(fw).html{
     head{
       title("Grocs "+source.name)
       meta("http-equiv":"content-type", content:"text/html; charset=UTF8")
@@ -686,9 +684,7 @@ def createGroc(File source, File output){
       div(id:"content"){
         table(cellpadding:"0", cellspacing:"0"){
           thead{
-            th("class":"docs"){
-              h1(source.name)
-            }
+            th("class":"docs"){ h1(source.name) }
             th()
           }
           tbody{
@@ -698,11 +694,11 @@ def createGroc(File source, File output){
                   div("class":"pilwrap"){
                     a("class":"pilcrow", href:"#section-"+i, "#")
                   }
-                  
+
                   mkp.yieldUnescaped(code[0])
                 }
                 if(code[1].size()&gt;0){
-                td("class":"codes"){
+                  td("class":"codes"){
                     pre("class":"brush: groovy; gutter: false; toolbar: false;"){
                       mkp.yield(code[1])
                     }
