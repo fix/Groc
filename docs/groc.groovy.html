@@ -36,16 +36,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 #jump_to, #jump_page {
   background: white;
-  -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777;
-  -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px;
+  border: solid 1px #aaa;
   font: 10px Arial;
-  text-transform: uppercase;
   cursor: pointer;
-  text-align: right;
+  text-align: left;
 }
 #jump_to, #jump_wrapper {
   position: fixed;
-  right: 0; top: 0;
+  right: 10; top: 10;
   padding: 5px 10px;
 }
   #jump_wrapper {
@@ -571,8 +569,9 @@ import org.pegdown.PegDownProcessor
             </td>
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>root=new File(".")
-docs=new File(root, "docs")
+docs=new File("docs")
 docs.mkdir()
+toc=[:]
 
 </pre>
             </td>
@@ -585,15 +584,17 @@ docs.mkdir()
             </td>
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>def parseFiles(File folder,String relativePath=""){
-  folder.listFiles().each{
-    if(it.isDirectory()&amp;&amp;it.name!="docs"&amp;&amp;!it.name.startsWith(".")){
-      parseFiles(it,relativePath+"/"+it.name)
-    }
-    if(it.name =~ ".*\\.${extension}"){
-      File docFolder=new File(docs,relativePath)
+  folder.listFiles().sort{it.isDirectory()?1:-1}.each{
+    if(it.name =~ ".*\\.${extension}\$"){
+      File docFolder=new File(docs.path+"/"+relativePath)
       docFolder.mkdirs()
-      createGroc(it,new File(docFolder,it.name+".html"))
+      File docSource=new File(docFolder.path+"/"+it.name+".html")
+      toc[it]=[docSource,relativePath+it.name+".html"]
     }
+    else if(it.isDirectory()&amp;&amp;it.name!="docs"&amp;&amp;!it.name.startsWith(".")){
+      parseFiles(it,relativePath+it.name+"/")
+    }
+    
   }
 }
 
@@ -617,25 +618,36 @@ parseFiles(root)
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>/*
  * Comment not parsed
- * 
  */
 def createGroc(File source, File output){
-  def parsedCode=[]
+</pre>
+            </td>
+          </tr>
+          <tr id='section-8'>
+            <td class='docs' colspan='1'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-8'>#</a>
+              </div><h2>The Parser</h2>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>  def parsedCode=[]
   boolean commentOn=false
   def currentCode // comment,code
   source.eachLine{
     def line=it
     if(it =~ /^\/\*\*.*/){
-      if(currentCode)parsedCode&lt;&lt;currentCode
-      currentCode=["", ""]
-      commentOn=true
-      line=it.replaceFirst("/\\**","")
+      if(!commentOn){
+        if(currentCode)parsedCode&lt;&lt;currentCode
+        currentCode=["", ""]
+        line=it.replaceFirst("/\\**","")
+        commentOn=true
+      }
     }
 
     if(commentOn){
       currentCode[0]+=((line =~ ".?\\*\\**/")
-          .replaceFirst("") =~ ".?\\*")
-          .replaceFirst("")+"\n"
+      .replaceFirst("") =~ ".?\\*")
+      .replaceFirst("")+"\n"
     }
     else{
       currentCode[1]+=line+"\n"
@@ -655,15 +667,24 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-  /**
-   * 
-   *## The HTML template, thanks to MarkupBuilder
-   * 
-   */
-  /**
-   * Inlining all the javascript and css
-   */
-  def tl=new MarkupBuilder(fw).html{
+</pre>
+            </td>
+          </tr>
+          <tr id='section-9'>
+            <td class='docs main' colspan='2'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-9'>#</a>
+              </div><h2>The HTML template, thanks to MarkupBuilder</h2>
+            </td>
+          </tr>
+          <tr id='section-10'>
+            <td class='docs' colspan='1'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-10'>#</a>
+              </div><p>Inlining all the javascript and css</p>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>  def tl=new MarkupBuilder(fw).html{
     head{
       title("Grocs "+source.name)
       meta("http-equiv":"content-type", content:"text/html; charset=UTF8")
@@ -682,6 +703,22 @@ def createGroc(File source, File output){
     }
     body{
       div(id:"content"){
+        if(toc.size()&gt;1){
+          div(id:"jump_to"){
+            mkp.yieldUnescaped("Jump To &amp;hellip;")
+            div(id:"jump_wrapper"){
+              div(id:"jump_page"){
+                toc.entrySet().each{
+                  a("class":"source",
+                    href:docs.absolutePath+"/${it.value[1]}",
+                    style:(it.key==source?"background-color:#aaffaa;":""),
+                    it.key.path.replaceFirst("./","")
+                    )
+                }
+              }
+            }
+          }
+        }
         table(cellpadding:"0", cellspacing:"0"){
           thead{
             th("class":"docs"){ h1(source.name) }
@@ -712,6 +749,27 @@ def createGroc(File source, File output){
       script(type:"text/javascript"){ mkp.yield("SyntaxHighlighter.all()") }
     }
   }
+}
+
+</pre>
+            </td>
+          </tr>
+          <tr id='section-11'>
+            <td class='docs main' colspan='2'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-11'>#</a>
+              </div><h2>Do It!</h2>
+            </td>
+          </tr>
+          <tr id='section-12'>
+            <td class='docs' colspan='1'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-12'>#</a>
+              </div>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>toc.entrySet().each{
+  createGroc(it.key,it.value[0])
 }
 </pre>
             </td>
