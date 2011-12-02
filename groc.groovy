@@ -1,6 +1,10 @@
 /**
  *## Introduction
- *Inspired by [Docco](http://jashkenas.github.com/docco/), Groc is a *document generator* based on your comments in the source code. You can optionally use the [Markdown](http://en.wikipedia.org/wiki/Markdown) to enhance the formatting
+ *Inspired by [Docco](http://jashkenas.github.com/docco/), [Groc](http://fix.github.com/Groc/groc.groovy.html) is a *document generator* based on your comments in the source code.
+ *
+ *You can optionally use the [Markdown](http://en.wikipedia.org/wiki/Markdown) to enhance the formatting.
+ *
+ *Find the source on [Github](http://github.com/fix/Groc/).
  *
  *## Installation
  *You need to have Groovy installed on your machine.
