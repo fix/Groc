@@ -6,16 +6,17 @@
  *You need to have Groovy installed on your machine.
  *
  *## Use
- *You can launch it inside a directory containing your groovy files using `groovy groc.groovy > doc.html`
+ *You can launch it inside a directory containing your groovy files using `groovy https://raw.github.com/fix/Groc/master/groc.groovy`. It will create a folder called `docs` with all your html files
  *
+ *Only comments starting with `/**` are parsed whereas `//` or `/*` comments are left in the code.
  */
 /**
- *  Grab the MarkDown processor. All capabilities with extensions can be used. See [PegDown](https://github.com/sirthias/pegdown) for more information.
+ * Grab the MarkDown processor. All capabilities with extensions can be used. See [PegDown](https://github.com/sirthias/pegdown) for more information.
  */
 @Grab(group='org.pegdown', module='pegdown', version='1.1.0')
 
 /**
- * Import Template Engine, Markupbuilder and PegDown processor
+ * Import Template Engine, MarkupBuilder and PegDown processor
  */
 
 import groovy.text.SimpleTemplateEngine
@@ -41,10 +42,15 @@ root.listFiles().each{
 }
 
 /*********************
- *### The main method
+ *## The main method
+ *You can create this kind of text spanning all the page commenting "empty" code
  *********************/
 /**
  * take input file and output file. Erase output if existing
+ */
+/*
+ * Comment not parsed
+ * 
  */
 def createGroc(File source, File output){
   def parsedCode=[]
@@ -52,7 +58,7 @@ def createGroc(File source, File output){
   def currentCode // comment,code
   source.eachLine{
     def line=it
-    if(it =~ /\/\*.*/){
+    if(it =~ /^\/\*\*.*/){
       if(currentCode)parsedCode<<currentCode
       currentCode=["", ""]
       commentOn=true
@@ -82,7 +88,7 @@ def createGroc(File source, File output){
 
 
   FileWriter fw=new FileWriter(output)
-  /*
+  /**
    * Inlining all the javascript and css
    */
   def tl=new MarkupBuilder(fw).html{
@@ -90,7 +96,7 @@ def createGroc(File source, File output){
       title("Grocs "+source.name)
       meta("http-equiv":"content-type", content:"text/html; charset=UTF8")
       style(media:"all"){
-        mkp.yieldUnescaped(new File("groc.css").text)
+        mkp.yieldUnescaped("https://raw.github.com/fix/Groc/master/groc.css".toURL().text)
       }
       style(media:"all"){
         mkp.yieldUnescaped("http://alexgorbatchev.com/pub/sh/current/styles/shCore.css".toURL().text)
