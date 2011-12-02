@@ -514,7 +514,7 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
             <td class='docs main' colspan='2'>
               <div class='pilwrap'>
                 <a class='pilcrow' href='#section-0'>#</a>
-              </div><h2>Introduction</h2><p>Inspired by <a href="http://jashkenas.github.com/docco/">Docco</a>, <a href="http://fix.github.com/Groc/groc.groovy.html">Groc</a> is a <em>document generator</em> based on your comments in the source code.</p><p>You can optionally use the <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> to enhance the formatting.</p><p>Find the source on <a href="http://github.com/fix/Groc/">Github</a>.</p><h2>Installation</h2><p>You need to have Groovy installed on your machine.</p><h2>Use</h2><p>You can launch it inside a directory containing your groovy files using <code>groovy https://raw.github.com/fix/Groc/master/groc.groovy</code>. It will create a folder called <code>docs</code> with all your html files</p><p>Only comments starting with <code>/**</code> are parsed whereas <code>//</code> or <code>/*</code> comments are left in the code.</p>
+              </div><h2>Introduction</h2><p>Inspired by <a href="http://jashkenas.github.com/docco/">Docco</a>, <a href="http://fix.github.com/Groc/groc.groovy.html">Groc</a> is a <em>document generator</em> based on your comments in the source code.</p><p>You can optionally use the <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> to enhance the formatting.</p><p>Find the source on <a href="http://github.com/fix/Groc/">Github</a>.</p><h2>Installation</h2><p>You need to have Groovy installed on your machine.</p><h2>Use</h2><p>You can launch it inside a directory containing your groovy files using <code>groovy https://raw.github.com/fix/Groc/master/groc.groovy [extension]</code>. It will create a folder called <code>docs</code> with all your html files</p><p>Only comments starting with <code>/**</code> are parsed whereas <code>//</code> or <code>/*</code> comments are left in the code.</p>
             </td>
           </tr>
           <tr id='section-1'>
@@ -549,6 +549,24 @@ import org.pegdown.PegDownProcessor
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
                 <a class='pilcrow' href='#section-3'>#</a>
+              </div><p>From args get the file type to be parse:</p>
+<ul>
+  <li>"groovy" for <code>.groovy</code> files,</li>
+  <li>"java" for <code>.java</code> files</li>
+  <li>"gradle" for <code>.gradle files</code></li>
+  <li>"asfasfafasd" for <code>.asfasfafasd</code> files</li>
+</ul><p>Default is "groovy"</p>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def extension = args.length==1?args[0]:"groovy"
+
+</pre>
+            </td>
+          </tr>
+          <tr id='section-4'>
+            <td class='docs' colspan='1'>
+              <div class='pilwrap'>
+                <a class='pilcrow' href='#section-4'>#</a>
               </div><p>Set Initial parameters such as current folder to process your <code>.groovy</code> files</p>
             </td>
             <td class='codes'>
@@ -559,15 +577,15 @@ docs.mkdir()
 </pre>
             </td>
           </tr>
-          <tr id='section-4'>
+          <tr id='section-5'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-4'>#</a>
+                <a class='pilcrow' href='#section-5'>#</a>
               </div><p>Executing for all <code>.groovy</code> files in the folder</p>
             </td>
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>root.listFiles().each{
-  if(it.name =~ /.*\.groovy/){
+  if(it.name =~ ".*\\.${extension}"){
     File output=new File(docs,it.name+".html")
     createGroc(it,output)
   }
@@ -576,17 +594,17 @@ docs.mkdir()
 </pre>
             </td>
           </tr>
-          <tr id='section-5'>
+          <tr id='section-6'>
             <td class='docs main' colspan='2'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-5'>#</a>
+                <a class='pilcrow' href='#section-6'>#</a>
               </div><h2>The main method</h2><p>You can create this kind of text spanning all the page commenting "empty" code</p>
             </td>
           </tr>
-          <tr id='section-6'>
+          <tr id='section-7'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-6'>#</a>
+                <a class='pilcrow' href='#section-7'>#</a>
               </div><p>take input file and output file. Erase output if existing</p>
             </td>
             <td class='codes'>
@@ -633,17 +651,17 @@ def createGroc(File source, File output){
 </pre>
             </td>
           </tr>
-          <tr id='section-7'>
+          <tr id='section-8'>
             <td class='docs main' colspan='2'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-7'>#</a>
+                <a class='pilcrow' href='#section-8'>#</a>
               </div><h2>The HTML template, thanks to MarkupBuilder</h2>
             </td>
           </tr>
-          <tr id='section-8'>
+          <tr id='section-9'>
             <td class='docs' colspan='1'>
               <div class='pilwrap'>
-                <a class='pilcrow' href='#section-8'>#</a>
+                <a class='pilcrow' href='#section-9'>#</a>
               </div><p>Inlining all the javascript and css</p>
             </td>
             <td class='codes'>
@@ -676,7 +694,7 @@ def createGroc(File source, File output){
           tbody{
             parsedCode.eachWithIndex {code,i-&gt;
               tr(id:"section-"+i){
-                td("class":"docs"+(code[1].size()&gt;0?"":" main"), colspan:code[1].size()&gt;0?"1":"2",){
+                td("class":"docs"+(code[1].size()&gt;0?"":" main"), colspan:code[1].size()&gt;0?"1":"2"){
                   div("class":"pilwrap"){
                     a("class":"pilcrow", href:"#section-"+i, "#")
                   }

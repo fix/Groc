@@ -10,7 +10,7 @@
  *You need to have Groovy installed on your machine.
  *
  *## Use
- *You can launch it inside a directory containing your groovy files using `groovy https://raw.github.com/fix/Groc/master/groc.groovy`. It will create a folder called `docs` with all your html files
+ *You can launch it inside a directory containing your groovy files using `groovy https://raw.github.com/fix/Groc/master/groc.groovy [extension]`. It will create a folder called `docs` with all your html files
  *
  *Only comments starting with `/**` are parsed whereas `//` or `/*` comments are left in the code.
  */
@@ -29,6 +29,18 @@ import java.nio.charset.Charset
 import org.pegdown.PegDownProcessor
 
 /**
+ * From args get the file type to be parse:
+ * 
+ * - "groovy" for `.groovy` files,
+ * - "java" for `.java` files
+ * - "gradle" for `.gradle files`
+ * - "asfasfafasd" for `.asfasfafasd` files
+ * 
+ * Default is "groovy"
+ */
+def extension = args.length==1?args[0]:"groovy"
+
+/**
  * Set Initial parameters such as current folder to process your `.groovy` files
  */
 File root=new File(".")
@@ -39,7 +51,7 @@ docs.mkdir()
  *Executing for all `.groovy` files in the folder
  */
 root.listFiles().each{
-  if(it.name =~ /.*\.groovy/){
+  if(it.name =~ ".*\\.${extension}"){
     File output=new File(docs,it.name+".html")
     createGroc(it,output)
   }
@@ -129,7 +141,7 @@ def createGroc(File source, File output){
           tbody{
             parsedCode.eachWithIndex {code,i->
               tr(id:"section-"+i){
-                td("class":"docs"+(code[1].size()>0?"":" main"), colspan:code[1].size()>0?"1":"2",){
+                td("class":"docs"+(code[1].size()>0?"":" main"), colspan:code[1].size()>0?"1":"2"){
                   div("class":"pilwrap"){
                     a("class":"pilcrow", href:"#section-"+i, "#")
                   }
