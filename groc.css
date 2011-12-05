@@ -2,7 +2,9 @@
 body {
   padding-top:40px;
 }
-
+h1{
+  padding:40px;
+}
 
 table td {
   border: 0;

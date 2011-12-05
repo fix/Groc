@@ -185,6 +185,9 @@ def createGroc(File source, File output){
             }
           }
         }
+        if(toc.size()<2){
+          h1{mkp.yield(source.name)}
+        }
         table(cellpadding:"0", cellspacing:"0"){
           tbody{
             parsedCode.eachWithIndex {code,i->
