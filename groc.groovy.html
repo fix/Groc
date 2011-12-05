@@ -363,7 +363,9 @@ button.btn::-moz-focus-inner,input[type=submit].btn::-moz-focus-inner{padding:0;
 body {
   padding-top:40px;
 }
-
+h1{
+  padding:40px;
+}
 
 table td {
   border: 0;
@@ -828,6 +830,7 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
   </head>
   <body>
     <div id='content'>
+      <h1>groc.groovy</h1>
       <table cellpadding='0' cellspacing='0'>
         <tbody>
           <tr id='section-0'>
@@ -1094,6 +1097,9 @@ parseFiles(root)
               }
             }
           }
+        }
+        if(toc.size()&lt;2){
+          h1{mkp.yield(source.name)}
         }
         table(cellpadding:"0", cellspacing:"0"){
           tbody{
