@@ -99,13 +99,15 @@ def createGroc(File source, File output){
    */
   def parsedCode=[]
   boolean commentOn=false
-  def currentCode // comment,code
+  def currentCode=["",""] // comment,code
   source.eachLine{
     def line=it
     if(it =~ /^ *\/\*\*.*/){
       if(!commentOn){
-        if(currentCode && currentCode.join("").size()>0)parsedCode<<currentCode
-        currentCode=["", ""]
+        if(currentCode && currentCode.join("").size()>0){
+            parsedCode<<currentCode
+            currentCode=["", ""]
+        }
         line=it.replaceFirst(/^ *\/\*\*.*/,"")
         commentOn=true
       }
