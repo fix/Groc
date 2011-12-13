@@ -989,13 +989,15 @@ parseFiles(root)
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>  def parsedCode=[]
   boolean commentOn=false
-  def currentCode // comment,code
+  def currentCode=["",""] // comment,code
   source.eachLine{
     def line=it
     if(it =~ /^ *\/\*\*.*/){
       if(!commentOn){
-        if(currentCode &amp;&amp; currentCode.join("").size()&gt;0)parsedCode&lt;&lt;currentCode
-        currentCode=["", ""]
+        if(currentCode &amp;&amp; currentCode.join("").size()&gt;0){
+            parsedCode&lt;&lt;currentCode
+            currentCode=["", ""]
+        }
         line=it.replaceFirst(/^ *\/\*\*.*/,"")
         commentOn=true
       }
