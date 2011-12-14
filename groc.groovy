@@ -177,7 +177,7 @@ def createGroc(File source, File output){
                   toc.entrySet().each{item->
                     li("class":(item.key==source?"active":"")){
                       a("class":"source",
-                          href:docs.absolutePath+"/${item.value[1]}",
+                          href:docs.absolutePath+File.sparator+"${item.value[1]}",
                           item.key.path.replaceFirst("./","")
                           )
                     }
