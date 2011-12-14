@@ -830,7 +830,21 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
   </head>
   <body>
     <div id='content'>
-      <h1>groc.groovy</h1>
+      <div class='topbar'>
+        <div class='topbar-inner'>
+          <div class='container'>
+            <a class='brand' href='#'>groc.groovy</a>
+            <ul class='nav'>
+              <li class='active'>
+                <a class='source' href='groc.groovy.html'>groc.groovy</a>
+              </li>
+              <li class=''>
+                <a class='source' href='test/groc.groovy.html'>test/groc.groovy</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <table cellpadding='0' cellspacing='0'>
         <tbody>
           <tr id='section-0'>
@@ -915,11 +929,28 @@ toc=[:]
               <div class='bubble'>
                 <div class='pilwrap'>
                   <a class='pilcrow' href='#section-5'>#</a>
+                </div><p>Using CLIBuilder to parse the arg line </p>
+              </div>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
+cli.e('optional extension, default is "groovy", supported are gradle, java and css')
+cli.d('use a long listing format')
+def options = cli.parse(args)
+ 
+</pre>
+            </td>
+          </tr>
+          <tr id='section-6'>
+            <td class='docs' colspan='1'>
+              <div class='bubble'>
+                <div class='pilwrap'>
+                  <a class='pilcrow' href='#section-6'>#</a>
                 </div><p>Executing for all <code>.groovy</code> files in the folder</p>
               </div>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>def parseFiles(File folder,String relativePath=""){
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def parseFiles(File folder,String relativePath="", String returningPath=""){
   folder.listFiles().sort{
     it.isDirectory()?1:-1
   }.each{
@@ -929,11 +960,12 @@ toc=[:]
       File docSource=new File(docFolder.path+"/"+it.name+".html")
       toc[it]=[
         docSource,
-        relativePath+it.name+".html"
+        relativePath+it.name+".html",
+        returningPath,
       ]
     }
     else if(it.isDirectory()&amp;&amp;it.name!="docs"&amp;&amp;!it.name.startsWith(".")){
-      parseFiles(it,relativePath+it.name+"/")
+      parseFiles(it,relativePath+it.name+"/", returningPath+"../")
     }
   }
 }
@@ -941,11 +973,11 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-6'>
+          <tr id='section-7'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-6'>#</a>
+                  <a class='pilcrow' href='#section-7'>#</a>
                 </div><p>This comment is not parsed  because only single star when opening the comment.</p>
               </div>
             </td>
@@ -956,26 +988,13 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-7'>
+          <tr id='section-8'>
             <td class='docs main' colspan='2'>
               <div class=''>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-7'>#</a>
+                  <a class='pilcrow' href='#section-8'>#</a>
                 </div><h2>The main method</h2><p>You can create this kind of text spanning all the page commenting "empty" code</p>
               </div>
-            </td>
-          </tr>
-          <tr id='section-8'>
-            <td class='docs' colspan='1'>
-              <div class='bubble'>
-                <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-8'>#</a>
-                </div><p>Take input file and output file. Erase output if existing</p>
-              </div>
-            </td>
-            <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>def createGroc(File source, File output){
-</pre>
             </td>
           </tr>
           <tr id='section-9'>
@@ -983,6 +1002,19 @@ parseFiles(root)
               <div class='bubble'>
                 <div class='pilwrap'>
                   <a class='pilcrow' href='#section-9'>#</a>
+                </div><p>Take input file and output file. Erase output if existing</p>
+              </div>
+            </td>
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def createGroc(File source, File output, String returningPath){
+</pre>
+            </td>
+          </tr>
+          <tr id='section-10'>
+            <td class='docs' colspan='1'>
+              <div class='bubble'>
+                <div class='pilwrap'>
+                  <a class='pilcrow' href='#section-10'>#</a>
                 </div><h2>The Parser</h2>
               </div>
             </td>
@@ -1022,11 +1054,11 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-10'>
+          <tr id='section-11'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-10'>#</a>
+                  <a class='pilcrow' href='#section-11'>#</a>
                 </div><p>Applying PegDown.markdown to all parsed comments</p>
               </div>
             </td>
@@ -1038,11 +1070,11 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-11'>
+          <tr id='section-12'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-11'>#</a>
+                  <a class='pilcrow' href='#section-12'>#</a>
                 </div><h2>The HTML template, thanks to MarkupBuilder</h2>
               </div>
             </td>
@@ -1054,11 +1086,11 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-12'>
+          <tr id='section-13'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-12'>#</a>
+                  <a class='pilcrow' href='#section-13'>#</a>
                 </div><p>Inlining all the javascript and css</p>
               </div>
             </td>
@@ -1090,7 +1122,7 @@ parseFiles(root)
                   toc.entrySet().each{item-&gt;
                     li("class":(item.key==source?"active":"")){
                       a("class":"source",
-                          href:item.value[1],
+                          href:returningPath+item.value[1],
                           item.key.path.replaceFirst("./","")
                           )
                     }
@@ -1136,17 +1168,17 @@ parseFiles(root)
 </pre>
             </td>
           </tr>
-          <tr id='section-13'>
+          <tr id='section-14'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-13'>#</a>
+                  <a class='pilcrow' href='#section-14'>#</a>
                 </div><h2>Do It!</h2>
               </div>
             </td>
             <td class='codes'>
               <pre class='brush: groovy; gutter: false; toolbar: false;'>toc.entrySet().each{
-  createGroc(it.key,it.value[0])
+  createGroc(it.key,it.value[0], it.value[2])
 }
 </pre>
             </td>

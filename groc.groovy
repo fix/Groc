@@ -52,10 +52,19 @@ root=new File(".")
 docs=new File("docs")
 docs.mkdir()
 toc=[:]
+
+/**
+ * Using CLIBuilder to parse the arg line 
+ */
+def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
+cli.e('optional extension, default is "groovy", supported are gradle, java and css')
+cli.d('use a long listing format')
+def options = cli.parse(args)
+ 
 /**
  *Executing for all `.groovy` files in the folder
  */
-def parseFiles(File folder,String relativePath=""){
+def parseFiles(File folder,String relativePath="", String returningPath=""){
   folder.listFiles().sort{
     it.isDirectory()?1:-1
   }.each{
@@ -65,11 +74,12 @@ def parseFiles(File folder,String relativePath=""){
       File docSource=new File(docFolder.path+"/"+it.name+".html")
       toc[it]=[
         docSource,
-        relativePath+it.name+".html"
+        relativePath+it.name+".html",
+        returningPath,
       ]
     }
     else if(it.isDirectory()&&it.name!="docs"&&!it.name.startsWith(".")){
-      parseFiles(it,relativePath+it.name+"/")
+      parseFiles(it,relativePath+it.name+"/", returningPath+"../")
     }
   }
 }
@@ -93,7 +103,7 @@ parseFiles(root)
 /**
  * Take input file and output file. Erase output if existing
  */
-def createGroc(File source, File output){
+def createGroc(File source, File output, String returningPath){
   /**
    *## The Parser
    */
@@ -177,7 +187,7 @@ def createGroc(File source, File output){
                   toc.entrySet().each{item->
                     li("class":(item.key==source?"active":"")){
                       a("class":"source",
-                          href:item.value[1],
+                          href:returningPath+item.value[1],
                           item.key.path.replaceFirst("./","")
                           )
                     }
@@ -225,5 +235,5 @@ def createGroc(File source, File output){
  *## Do It!
  */
 toc.entrySet().each{
-  createGroc(it.key,it.value[0])
+  createGroc(it.key,it.value[0], it.value[2])
 }
