@@ -830,21 +830,7 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
   </head>
   <body>
     <div id='content'>
-      <div class='topbar'>
-        <div class='topbar-inner'>
-          <div class='container'>
-            <a class='brand' href='#'>groc.groovy</a>
-            <ul class='nav'>
-              <li class='active'>
-                <a class='source' href='groc.groovy.html'>groc.groovy</a>
-              </li>
-              <li class=''>
-                <a class='source' href='test/groc.groovy.html'>test/groc.groovy</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <h1>groc.groovy</h1>
       <table cellpadding='0' cellspacing='0'>
         <tbody>
           <tr id='section-0'>
@@ -888,18 +874,25 @@ import org.pegdown.PegDownProcessor
               <div class='bubble'>
                 <div class='pilwrap'>
                   <a class='pilcrow' href='#section-3'>#</a>
-                </div><p>From args get the file type to be parse:</p>
-<ul>
-  <li>"groovy" for <code>.groovy</code> files,</li>
-  <li>"java" for <code>.java</code> files</li>
-  <li>"gradle" for <code>.gradle files</code></li>
-  <li>"css" for <code>.css</code> files</li>
-</ul><p>Default is "groovy"</p>
+                </div><p>Using CLIBuilder to parse the arg line </p>
               </div>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>extension = args.length==1?args[0]:"groovy"
-brushes=[
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
+cli.e(args:1, argName:'extension', 'optional extension, default is "groovy", supported are gradle, java and css')
+cli.d(args:1, argName:'docs directory', 'optional docs folder extension, default is "docs"')
+def options = cli.parse(args)
+if(options){
+    extension=options.e?options.e:"groovy"
+    docs=options.d?options.d:"docs"
+}
+</pre>
+            </td>
+          </tr>
+          <tr id='section-4'>
+            <td class='docs' colspan='1' />
+            <td class='codes'>
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>brushes=[
       groovy:"shBrushGroovy.js",
       gradle:"shBrushGroovy.js",
       java  :"shBrushJava.js",
@@ -908,35 +901,19 @@ brushes=[
 </pre>
             </td>
           </tr>
-          <tr id='section-4'>
-            <td class='docs' colspan='1'>
-              <div class='bubble'>
-                <div class='pilwrap'>
-                  <a class='pilcrow' href='#section-4'>#</a>
-                </div><p>Set Initial parameters such as current folder to process your <code>.groovy</code> files</p>
-              </div>
-            </td>
-            <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>root=new File(".")
-docs=new File("docs")
-docs.mkdir()
-toc=[:]
-</pre>
-            </td>
-          </tr>
           <tr id='section-5'>
             <td class='docs' colspan='1'>
               <div class='bubble'>
                 <div class='pilwrap'>
                   <a class='pilcrow' href='#section-5'>#</a>
-                </div><p>Using CLIBuilder to parse the arg line </p>
+                </div> Set Initial parameters such as current folder to process your <code>.groovy</code> files
               </div>
             </td>
             <td class='codes'>
-              <pre class='brush: groovy; gutter: false; toolbar: false;'>def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
-cli.e('optional extension, default is "groovy", supported are gradle, java and css')
-cli.d('use a long listing format')
-def options = cli.parse(args)
+              <pre class='brush: groovy; gutter: false; toolbar: false;'>root=new File(".")
+docs=new File(docs)
+docs.mkdir()
+toc=[:]
  
 </pre>
             </td>

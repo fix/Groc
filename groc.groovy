@@ -29,16 +29,17 @@ import groovy.xml.MarkupBuilder
 import org.pegdown.PegDownProcessor
 
 /**
- * From args get the file type to be parse:
- * 
- * - "groovy" for `.groovy` files,
- * - "java" for `.java` files
- * - "gradle" for `.gradle files`
- * - "css" for `.css` files
- * 
- * Default is "groovy"
+ * Using CLIBuilder to parse the arg line 
  */
-extension = args.length==1?args[0]:"groovy"
+def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
+cli.e(args:1, argName:'extension', 'optional extension, default is "groovy", supported are gradle, java and css')
+cli.d(args:1, argName:'docs directory', 'optional docs folder extension, default is "docs"')
+def options = cli.parse(args)
+if(options){
+    extension=options.e?options.e:"groovy"
+    docs=options.d?options.d:"docs"
+}
+
 brushes=[
       groovy:"shBrushGroovy.js",
       gradle:"shBrushGroovy.js",
@@ -49,17 +50,9 @@ brushes=[
  * Set Initial parameters such as current folder to process your `.groovy` files
  */
 root=new File(".")
-docs=new File("docs")
+docs=new File(docs)
 docs.mkdir()
 toc=[:]
-
-/**
- * Using CLIBuilder to parse the arg line 
- */
-def cli = new CliBuilder(usage:'groovy path/to/groc.groovy')
-cli.e('optional extension, default is "groovy", supported are gradle, java and css')
-cli.d('use a long listing format')
-def options = cli.parse(args)
  
 /**
  *Executing for all `.groovy` files in the folder
