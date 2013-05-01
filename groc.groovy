@@ -20,7 +20,7 @@
 /**
  * Grab the MarkDown processor. All capabilities with extensions can be used. See [PegDown](https://github.com/sirthias/pegdown) for more information.
  */
-@Grab(group='org.pegdown', module='pegdown', version='1.1.0')
+@Grab(group='org.pegdown', module='pegdown', version='1.2.1')
 
 /**
  * Import MarkupBuilder and PegDown processor
