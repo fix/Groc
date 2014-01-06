@@ -154,7 +154,7 @@ def createGroc(File source, File output, String returningPath){
      * Inlining all the javascript and css
      */      
       style(media:"all"){
-        mkp.yieldUnescaped("http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css".toURL().text)
+        mkp.yieldUnescaped("http://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css".toURL().text)
       }
       style(media:"all"){
         mkp.yieldUnescaped("https://raw.github.com/fix/Groc/master/groc.css".toURL().text)
